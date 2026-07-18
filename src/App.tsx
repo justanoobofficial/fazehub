@@ -154,7 +154,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen bg-zinc-950 text-white overflow-x-hidden">
       {/* Top Banner */}
       <div className="bg-emerald-600 py-2.5 text-center text-sm font-medium tracking-wide">
         🔥 Trusted & Approved • Tested Accounts • Instant Delivery • No Excuses
@@ -205,19 +205,19 @@ export default function App() {
       </nav>
 
       {/* Hero Section */}
-      <div className="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm mb-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-12 sm:pb-16 text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs sm:text-sm mb-6">
           <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
           DELIVERING SHARP SHARP ⚡
         </div>
         
-        <h1 className="text-7xl md:text-8xl font-semibold tracking-tighter leading-none mb-6">
+        <h1 className="text-[3.15rem] sm:text-6xl md:text-8xl font-semibold tracking-tighter leading-none mb-6">
           FAZE LOGS<br />MARKETPLACE
         </h1>
-        <p className="max-w-xl mx-auto text-2xl text-zinc-400 tracking-tight mb-4">
+        <p className="max-w-xl mx-auto text-lg sm:text-2xl text-zinc-400 tracking-tight mb-4">
           Premium accounts, foreign numbers &amp; verified logs.
         </p>
-        <p className="max-w-md mx-auto text-lg text-emerald-400 mb-10">
+        <p className="max-w-md mx-auto text-base sm:text-lg text-emerald-400 mb-10">
           Your old plug is getting nervous already.<br />Once you try us, there’s no going back.
         </p>
 
