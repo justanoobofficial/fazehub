@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { 
-  ShoppingCart, X, Search, Check, Clock, Shield, Zap, Users, 
-  MessageCircle, Star, ArrowRight 
+import React, { useMemo, useState } from 'react';
+import {
+  ShoppingCart, X, Search, Check, Clock, Shield, Zap, Users,
+  MessageCircle, Star, ArrowRight, SlidersHorizontal
 } from 'lucide-react';
 
-// Types
 interface Product {
   id: number;
   name: string;
@@ -15,32 +14,33 @@ interface Product {
   stock: string;
   badge?: string;
   popular?: boolean;
+  country: string;
+  ageYears?: number;
 }
 
 interface CartItem extends Product {
   quantity: number;
 }
 
-// Product Data
 const products: Product[] = [
-  { id: 1, name: "USA WhatsApp", category: "Numbers", price: 2900, description: "Premium verified USA WhatsApp numbers. Ready to use instantly.", features: ["Verified", "Clean", "Fast Delivery"], stock: "In Stock", badge: "BESTSELLER", popular: true },
-  { id: 2, name: "Google Voice Accounts", category: "Numbers", price: 4500, description: "Fresh USA Google Voice accounts with full access.", features: ["USA Number", "Verified", "No Reclaim"], stock: "In Stock" },
-  { id: 3, name: "USA Facebook (Dating)", category: "Social", price: 3800, description: "High quality USA Facebook accounts optimized for Dating.", features: ["Aged", "Clean", "Profile Ready"], stock: "In Stock", popular: true },
-  { id: 4, name: "USA Facebook (Non-Dating)", category: "Social", price: 3200, description: "Premium USA Facebook accounts for general use.", features: ["Active", "Aged", "Full Access"], stock: "In Stock" },
-  { id: 5, name: "UK Facebook Accounts", category: "Social", price: 4100, description: "Clean and reliable UK Facebook accounts.", features: ["UK Based", "Verified", "Fast Setup"], stock: "In Stock" },
-  { id: 6, name: "All Country Facebook", category: "Social", price: 2500, description: "Facebook accounts from multiple countries worldwide.", features: ["Multi-Country", "Fresh", "Bulk Ready"], stock: "In Stock" },
-  { id: 7, name: "Instagram Accounts", category: "Social", price: 3500, description: "Premium Instagram accounts — aged and high quality.", features: ["Aged", "Active", "Ready To Use"], stock: "In Stock", popular: true },
-  { id: 8, name: "TikTok Accounts", category: "Social", price: 2800, description: "Verified TikTok accounts from various regions.", features: ["Verified", "Clean", "Fast Delivery"], stock: "In Stock" },
-  { id: 9, name: "Snapchat Accounts", category: "Social", price: 3000, description: "Fresh and active Snapchat accounts.", features: ["Active", "High Quality", "Instant Access"], stock: "In Stock" },
-  { id: 10, name: "Twitter / X Accounts", category: "Social", price: 2700, description: "Clean Twitter/X accounts. Aged and ready.", features: ["Aged", "Clean", "Full Access"], stock: "In Stock" },
-  { id: 11, name: "LinkedIn Accounts", category: "Social", price: 5200, description: "Premium professional LinkedIn accounts.", features: ["Professional", "Aged", "Verified"], stock: "In Stock" },
-  { id: 12, name: "POF Login & Numbers", category: "Numbers", price: 2400, description: "POF accounts + numbers. Perfect for dating platforms.", features: ["Verified", "Number Included", "Instant"], stock: "In Stock" },
-  { id: 13, name: "All Countries Numbers", category: "Numbers", price: 1800, description: "Fresh mobile numbers from all countries. Bulk available.", features: ["Multi-Country", "Verified", "Clean"], stock: "In Stock" },
-  { id: 14, name: "Premium Netflix Logs", category: "Entertainment", price: 6200, description: "Premium high-quality Netflix accounts and logs.", features: ["Premium", "4K Ready", "Long Lasting"], stock: "In Stock", popular: true },
-  { id: 15, name: "Apple Music E-Codes", category: "Entertainment", price: 3500, description: "Apple Music gift codes and E-codes.", features: ["Instant", "Valid", "Global"], stock: "In Stock" },
-  { id: 16, name: "iCloud Storage", category: "Entertainment", price: 4700, description: "Premium iCloud storage upgrades and accounts.", features: ["Secure", "Fast", "Reliable"], stock: "In Stock" },
-  { id: 17, name: "Vons Logs", category: "Entertainment", price: 3900, description: "Verified Vons logs. Fresh and premium quality.", features: ["Verified", "Clean", "High Value"], stock: "In Stock" },
-  { id: 18, name: "ID Card Editing Tools", category: "Tools", price: 7500, description: "Professional ID card editing tools. Tested & trusted.", features: ["Professional", "Tested", "Full Access"], stock: "Limited" },
+  { id: 1, name: 'USA WhatsApp', category: 'Numbers', price: 2900, description: 'Premium verified USA WhatsApp numbers. Ready to use instantly.', features: ['Verified', 'Clean', 'Fast Delivery'], stock: 'In Stock', badge: 'BESTSELLER', popular: true, country: 'USA', ageYears: 1 },
+  { id: 2, name: 'Google Voice Accounts', category: 'Numbers', price: 4500, description: 'Fresh USA Google Voice accounts with full access.', features: ['USA Number', 'Verified', 'No Reclaim'], stock: 'In Stock', country: 'USA', ageYears: 1 },
+  { id: 3, name: 'USA Facebook (Dating)', category: 'Social', price: 3800, description: 'High quality USA Facebook accounts optimized for Dating.', features: ['Aged', 'Clean', 'Profile Ready'], stock: 'In Stock', popular: true, country: 'USA', ageYears: 2 },
+  { id: 4, name: 'USA Facebook (Non-Dating)', category: 'Social', price: 3200, description: 'Premium USA Facebook accounts for general use.', features: ['Active', 'Aged', 'Full Access'], stock: 'In Stock', country: 'USA', ageYears: 3 },
+  { id: 5, name: 'UK Facebook Accounts', category: 'Social', price: 4100, description: 'Clean and reliable UK Facebook accounts.', features: ['UK Based', 'Verified', 'Fast Setup'], stock: 'In Stock', country: 'UK', ageYears: 2 },
+  { id: 6, name: 'All Country Facebook', category: 'Social', price: 2500, description: 'Facebook accounts from multiple countries worldwide.', features: ['Multi-Country', 'Fresh', 'Bulk Ready'], stock: 'In Stock', country: 'Global', ageYears: 1 },
+  { id: 7, name: 'Instagram Accounts', category: 'Social', price: 3500, description: 'Premium Instagram accounts — aged and high quality.', features: ['Aged', 'Active', 'Ready To Use'], stock: 'In Stock', popular: true, country: 'Canada', ageYears: 4 },
+  { id: 8, name: 'TikTok Accounts', category: 'Social', price: 2800, description: 'Verified TikTok accounts from various regions.', features: ['Verified', 'Clean', 'Fast Delivery'], stock: 'In Stock', country: 'Canada', ageYears: 2 },
+  { id: 9, name: 'Snapchat Accounts', category: 'Social', price: 3000, description: 'Fresh and active Snapchat accounts.', features: ['Active', 'High Quality', 'Instant Access'], stock: 'In Stock', country: 'UK', ageYears: 3 },
+  { id: 10, name: 'Twitter / X Accounts', category: 'Social', price: 2700, description: 'Clean Twitter/X accounts. Aged and ready.', features: ['Aged', 'Clean', 'Full Access'], stock: 'In Stock', country: 'USA', ageYears: 2 },
+  { id: 11, name: 'LinkedIn Accounts', category: 'Social', price: 5200, description: 'Premium professional LinkedIn accounts.', features: ['Professional', 'Aged', 'Verified'], stock: 'In Stock', country: 'UK', ageYears: 5 },
+  { id: 12, name: 'POF Login & Numbers', category: 'Numbers', price: 2400, description: 'POF accounts + numbers. Perfect for dating platforms.', features: ['Verified', 'Number Included', 'Instant'], stock: 'In Stock', country: 'USA', ageYears: 1 },
+  { id: 13, name: 'All Countries Numbers', category: 'Numbers', price: 1800, description: 'Fresh mobile numbers from all countries. Bulk available.', features: ['Multi-Country', 'Verified', 'Clean'], stock: 'In Stock', country: 'Global', ageYears: 1 },
+  { id: 14, name: 'Premium Netflix Logs', category: 'Entertainment', price: 6200, description: 'Premium high-quality Netflix accounts and logs.', features: ['Premium', '4K Ready', 'Long Lasting'], stock: 'In Stock', popular: true, country: 'Global', ageYears: 2 },
+  { id: 15, name: 'Apple Music E-Codes', category: 'Entertainment', price: 3500, description: 'Apple Music gift codes and E-codes.', features: ['Instant', 'Valid', 'Global'], stock: 'In Stock', country: 'Global', ageYears: 1 },
+  { id: 16, name: 'iCloud Storage', category: 'Entertainment', price: 4700, description: 'Premium iCloud storage upgrades and accounts.', features: ['Secure', 'Fast', 'Reliable'], stock: 'In Stock', country: 'Global', ageYears: 1 },
+  { id: 17, name: 'Vons Logs', category: 'Entertainment', price: 3900, description: 'Verified Vons logs. Fresh and premium quality.', features: ['Verified', 'Clean', 'High Value'], stock: 'In Stock', country: 'USA', ageYears: 2 },
+  { id: 18, name: 'ID Card Editing Tools', category: 'Tools', price: 7500, description: 'Professional ID card editing tools. Tested & trusted.', features: ['Professional', 'Tested', 'Full Access'], stock: 'Limited', country: 'Global', ageYears: 1 },
 ];
 
 const categories = ["All", "Social", "Numbers", "Entertainment", "Tools"];
@@ -70,20 +70,45 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [checkoutForm, setCheckoutForm] = useState({ name: "", whatsapp: "", email: "" });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [selectedCountry, setSelectedCountry] = useState('All');
+  const [ageRange, setAgeRange] = useState({ min: 0, max: 8 });
+  const [checkoutForm, setCheckoutForm] = useState({ name: '', whatsapp: '', email: '' });
   const [orderComplete, setOrderComplete] = useState(false);
 
-  // Filter products
-  const filteredProducts = products
-    .filter(product => {
-      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           product.description.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = activeCategory === "All" || product.category === activeCategory;
-      return matchesSearch && matchesCategory;
-    })
-    .sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0));
+  const allCountries = useMemo(() => Array.from(new Set(products.map((product) => product.country))).sort(), []);
+
+  const filteredProducts = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    return products
+      .filter((product) => {
+        const matchesSearch =
+          product.name.toLowerCase().includes(query) ||
+          product.description.toLowerCase().includes(query) ||
+          product.country.toLowerCase().includes(query) ||
+          product.features.some((feature) => feature.toLowerCase().includes(query));
+
+        const matchesCategory = activeCategory === 'All' || product.category === activeCategory;
+        const matchesCountry = selectedCountry === 'All' || product.country === selectedCountry;
+        const matchesAge = typeof product.ageYears !== 'number' || (product.ageYears >= ageRange.min && product.ageYears <= ageRange.max);
+
+        return matchesSearch && matchesCategory && matchesCountry && matchesAge;
+      })
+      .sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0));
+  }, [activeCategory, ageRange.max, ageRange.min, searchQuery, selectedCountry]);
+
+  const groupedProducts = useMemo(() => {
+    const sectionCategories = activeCategory === 'All' ? categories.filter((category) => category !== 'All') : [activeCategory];
+
+    return sectionCategories
+      .map((category) => ({
+        category,
+        products: filteredProducts.filter((product) => product.category === category),
+      }))
+      .filter((section) => section.products.length > 0);
+  }, [activeCategory, filteredProducts]);
 
   // Cart functions
   const addToCart = (product: Product, quantity: number = 1) => {
@@ -165,9 +190,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2.5">
-              <div className="h-9 w-9 rounded-xl bg-emerald-500 flex items-center justify-center">
-                <span className="font-bold text-xl tracking-tighter text-black">FL</span>
-              </div>
+              <img src="/IMG-20260719-WA0005.jpg" alt="FAZE LOGS logo" className="h-10 w-10 rounded-xl object-cover border border-emerald-400/40 bg-zinc-900" />
               <div>
                 <div className="font-semibold tracking-tighter text-2xl">FAZE LOGS</div>
                 <div className="text-[10px] text-emerald-500 -mt-1.5 font-mono">PREMIUM MARKETPLACE</div>
@@ -277,72 +300,147 @@ export default function App() {
           </div>
         </div>
 
-        {/* Category Filters */}
-        <div id="categories" className="flex flex-wrap gap-2 mb-8">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all border ${
-                activeCategory === cat 
-                  ? 'bg-white text-black border-white' 
-                  : 'bg-zinc-900 border-white/10 hover:border-white/30 hover:bg-white/5'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        <div id="categories" className="rounded-3xl border border-white/10 bg-zinc-900/60 p-4 md:p-5 mb-8">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all border ${
+                  activeCategory === cat
+                    ? 'bg-white text-black border-white'
+                    : 'bg-zinc-950 border-white/10 hover:border-white/30 hover:bg-white/5'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-4">
+            <div className="relative md:col-span-2">
+              <Search className="absolute left-4 top-3.5 text-zinc-500 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search by item, country or feature..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-zinc-950 border border-white/10 focus:border-emerald-500 transition pl-11 py-3 rounded-2xl placeholder:text-zinc-500 outline-none text-sm"
+              />
+            </div>
+
+            <div className="relative">
+              <label className="text-[11px] font-medium tracking-[2px] text-zinc-400 block mb-1">COUNTRY</label>
+              <select
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.target.value)}
+                className="w-full bg-zinc-950 border border-white/10 focus:border-emerald-500 transition rounded-2xl py-3 px-3 text-sm outline-none"
+              >
+                <option value="All">All Countries</option>
+                {allCountries.map((country) => (
+                  <option key={country} value={country}>{country}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="relative">
+              <label className="text-[11px] font-medium tracking-[2px] text-zinc-400 block mb-1">AGE RANGE</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  min={0}
+                  max={10}
+                  value={ageRange.min}
+                  onChange={(e) => setAgeRange((prev) => ({ ...prev, min: Number(e.target.value) || 0 }))}
+                  className="w-full bg-zinc-950 border border-white/10 focus:border-emerald-500 transition rounded-2xl py-3 px-3 text-sm outline-none"
+                  placeholder="Min"
+                />
+                <input
+                  type="number"
+                  min={0}
+                  max={10}
+                  value={ageRange.max}
+                  onChange={(e) => setAgeRange((prev) => ({ ...prev, max: Number(e.target.value) || 0 }))}
+                  className="w-full bg-zinc-950 border border-white/10 focus:border-emerald-500 transition rounded-2xl py-3 px-3 text-sm outline-none"
+                  placeholder="Max"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-3 flex items-center gap-2 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-300">
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            Account filters now support Country + Age Range like Country: Canada • Age: 2 yrs
+          </div>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-              <div 
-                key={product.id} 
-                onClick={() => openProduct(product)}
-                className="group bg-zinc-900 border border-white/10 hover:border-white/20 rounded-3xl p-6 flex flex-col cursor-pointer transition-all active:scale-[0.985] hover:-translate-y-0.5"
-              >
-                <div className="flex justify-between items-start mb-4">
+        <div className="space-y-10">
+          {groupedProducts.length > 0 ? (
+            groupedProducts.map((section) => (
+              <section key={section.category} className="space-y-4">
+                <div className="flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-xs tracking-[1px] text-emerald-400 font-medium mb-1">{product.category.toUpperCase()}</div>
-                    <h3 className="font-semibold text-2xl tracking-tight pr-2">{product.name}</h3>
+                    <div className="text-[11px] uppercase tracking-[3px] text-emerald-400 font-medium">{section.category}</div>
+                    <h3 className="text-3xl font-semibold tracking-tight">{section.category} Listings</h3>
                   </div>
-                  {product.badge && (
-                    <div className="text-[10px] font-mono bg-emerald-500 text-black px-3 py-px rounded font-semibold tracking-wider h-fit mt-1">{product.badge}</div>
-                  )}
+                  <div className="text-sm text-zinc-400">{section.products.length} items</div>
                 </div>
 
-                <p className="text-sm text-zinc-400 flex-1 leading-snug mb-5">{product.description}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {section.products.map((product) => (
+                    <div
+                      key={product.id}
+                      onClick={() => openProduct(product)}
+                      className="group bg-zinc-900 border border-white/10 hover:border-white/20 rounded-3xl p-6 flex flex-col cursor-pointer transition-all active:scale-[0.985] hover:-translate-y-0.5"
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <div className="text-xs tracking-[1px] text-emerald-400 font-medium mb-1">{product.category.toUpperCase()}</div>
+                          <h3 className="font-semibold text-2xl tracking-tight pr-2">{product.name}</h3>
+                        </div>
+                        {product.badge && (
+                          <div className="text-[10px] font-mono bg-emerald-500 text-black px-3 py-px rounded font-semibold tracking-wider h-fit mt-1">{product.badge}</div>
+                        )}
+                      </div>
 
-                <div className="flex flex-wrap gap-1.5 mb-6">
-                  {product.features.map((f, i) => (
-                    <div key={i} className="text-xs bg-zinc-950 border border-white/10 px-3 py-px rounded-full text-zinc-400">{f}</div>
+                      <div className="flex flex-wrap gap-2 mb-4 text-[11px] text-zinc-300">
+                        <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10">Country: {product.country}</span>
+                        <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10">Age: {product.ageYears ? `${product.ageYears} yrs` : 'Fresh'}</span>
+                      </div>
+
+                      <p className="text-sm text-zinc-400 flex-1 leading-snug mb-5">{product.description}</p>
+
+                      <div className="flex flex-wrap gap-1.5 mb-6">
+                        {product.features.map((feature, index) => (
+                          <div key={index} className="text-xs bg-zinc-950 border border-white/10 px-3 py-px rounded-full text-zinc-400">{feature}</div>
+                        ))}
+                      </div>
+
+                      <div className="flex items-end justify-between pt-4 border-t border-white/10 mt-auto">
+                        <div>
+                          <div className="text-xs text-zinc-500">FROM</div>
+                          <div className="text-3xl font-semibold tracking-tighter tabular-nums">₦{product.price.toLocaleString()}</div>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <span className={`px-3 py-1 rounded-full text-xs ${product.stock === 'In Stock' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-orange-500/10 text-orange-400'}`}>
+                            {product.stock}
+                          </span>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                            className="bg-white hover:bg-emerald-400 transition px-5 py-2 text-sm font-semibold text-black rounded-2xl"
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   ))}
                 </div>
-
-                <div className="flex items-end justify-between pt-4 border-t border-white/10 mt-auto">
-                  <div>
-                    <div className="text-xs text-zinc-500">FROM</div>
-                    <div className="text-3xl font-semibold tracking-tighter tabular-nums">₦{product.price.toLocaleString()}</div>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm font-medium">
-                    <span className={`px-3 py-1 rounded-full text-xs ${product.stock === "In Stock" ? "bg-emerald-500/10 text-emerald-400" : "bg-orange-500/10 text-orange-400"}`}>
-                      {product.stock}
-                    </span>
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                      className="bg-white hover:bg-emerald-400 transition px-5 py-2 text-sm font-semibold text-black rounded-2xl"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </div>
+              </section>
             ))
           ) : (
-            <div className="col-span-full py-16 text-center text-zinc-500">
-              No products found. Try a different search.
+            <div className="rounded-3xl border border-dashed border-white/10 bg-zinc-900/50 py-16 text-center text-zinc-500">
+              No products found. Try adjusting your country or age filter.
             </div>
           )}
         </div>
